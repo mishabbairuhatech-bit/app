@@ -1,0 +1,185 @@
+import { Company } from '@/types';
+import { pick } from './services';
+
+const img = (id: string, w = 900) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const avatar = (n: number) => `https://i.pravatar.cc/120?img=${n}`;
+
+export const COMPANIES: Company[] = [
+  {
+    id: 'aqua-lux',
+    name: 'AquaLux Auto Spa',
+    tagline: 'Showroom shine, every single time',
+    image: img('photo-1520340356584-f9917d1eea6f'),
+    logo: img('photo-1552519507-da3b142c6e3d', 200),
+    rating: 4.9,
+    reviewCount: 1284,
+    distanceKm: 1.2,
+    etaMin: 6,
+    address: '18 Marina Boulevard, Bayfront',
+    area: 'Bayfront',
+    open: true,
+    openTime: '08:00',
+    closeTime: '21:00',
+    priceLevel: 3,
+    tags: ['Premium', 'Ceramic Pro', 'Eco Water'],
+    verified: true,
+    bookingsToday: 42,
+    gallery: [
+      img('photo-1520340356584-f9917d1eea6f'),
+      img('photo-1607860108855-64acf2078ed9'),
+      img('photo-1601362840469-51e4d8d58785'),
+    ],
+    services: pick(
+      ['express', 'premiumExterior', 'interiorDetail', 'fullValet', 'ceramicCoat', 'clayPolish', 'leatherCare'],
+      { premiumExterior: 29, fullValet: 65 },
+    ),
+    reviews: [
+      { id: 'r1', author: 'Marcus Lee', avatar: avatar(12), rating: 5, date: '2 days ago', text: 'The ceramic coating is unreal — water just beads off. Booking took 20 seconds.' },
+      { id: 'r2', author: 'Priya N.', avatar: avatar(45), rating: 5, date: '1 week ago', text: 'Interior came out spotless. The travel-time estimate was spot on too.' },
+      { id: 'r3', author: 'Dan O.', avatar: avatar(33), rating: 4, date: '2 weeks ago', text: 'Great finish, slightly pricey but worth it for a full valet.' },
+    ],
+  },
+  {
+    id: 'splash-hub',
+    name: 'Splash Hub Express',
+    tagline: 'In and out in under 25 minutes',
+    image: img('photo-1605164599901-db7f68c2b6f9'),
+    logo: img('photo-1519641471654-76ce0107ad1b', 200),
+    rating: 4.7,
+    reviewCount: 936,
+    distanceKm: 0.8,
+    etaMin: 4,
+    address: '92 Riverside Drive, Midtown',
+    area: 'Midtown',
+    open: true,
+    openTime: '07:00',
+    closeTime: '22:00',
+    priceLevel: 1,
+    tags: ['Express', 'Budget', 'Drive-thru'],
+    verified: true,
+    bookingsToday: 78,
+    gallery: [
+      img('photo-1605164599901-db7f68c2b6f9'),
+      img('photo-1503376780353-7e6692767b70'),
+    ],
+    services: pick(['express', 'premiumExterior', 'interiorDetail', 'engineBay', 'petHair', 'headlight'], {
+      express: 11,
+      premiumExterior: 22,
+    }),
+    reviews: [
+      { id: 'r1', author: 'Sara K.', avatar: avatar(5), rating: 5, date: '3 days ago', text: 'Fastest wash in the city. Perfect for a quick lunchtime clean.' },
+      { id: 'r2', author: 'Tom H.', avatar: avatar(60), rating: 4, date: '5 days ago', text: 'Good value express wash. Interior add-on was decent.' },
+    ],
+  },
+  {
+    id: 'mirror-finish',
+    name: 'Mirror Finish Detailing',
+    tagline: 'Obsessive detailing for enthusiasts',
+    image: img('photo-1607860108855-64acf2078ed9'),
+    logo: img('photo-1583121274602-3e2820c69888', 200),
+    rating: 5.0,
+    reviewCount: 512,
+    distanceKm: 3.4,
+    etaMin: 12,
+    address: '4 Chrome Lane, Uptown',
+    area: 'Uptown',
+    open: true,
+    openTime: '09:00',
+    closeTime: '19:00',
+    priceLevel: 3,
+    tags: ['Detailing', 'Paint Correction', 'By Appointment'],
+    verified: true,
+    bookingsToday: 14,
+    gallery: [
+      img('photo-1607860108855-64acf2078ed9'),
+      img('photo-1601362840469-51e4d8d58785'),
+      img('photo-1552519507-da3b142c6e3d'),
+    ],
+    services: pick(['fullValet', 'ceramicCoat', 'clayPolish', 'leatherCare', 'headlight', 'engineBay'], {
+      ceramicCoat: 169,
+      clayPolish: 89,
+    }),
+    reviews: [
+      { id: 'r1', author: 'Elena V.', avatar: avatar(24), rating: 5, date: '1 day ago', text: 'They corrected swirl marks I thought were permanent. Absolute artists.' },
+      { id: 'r2', author: 'James P.', avatar: avatar(51), rating: 5, date: '1 week ago', text: 'Worth every cent. My 10-year-old car looks brand new.' },
+    ],
+  },
+  {
+    id: 'eco-shine',
+    name: 'EcoShine Waterless',
+    tagline: 'Waterless wash, zero footprint',
+    image: img('photo-1601362840469-51e4d8d58785'),
+    logo: img('photo-1517524008697-84bbe3c3fd98', 200),
+    rating: 4.6,
+    reviewCount: 421,
+    distanceKm: 2.1,
+    etaMin: 8,
+    address: '55 Green Way, Parkside',
+    area: 'Parkside',
+    open: false,
+    openTime: '08:30',
+    closeTime: '18:00',
+    priceLevel: 2,
+    tags: ['Eco', 'Waterless', 'Mobile'],
+    verified: true,
+    bookingsToday: 23,
+    gallery: [
+      img('photo-1601362840469-51e4d8d58785'),
+      img('photo-1520340356584-f9917d1eea6f'),
+    ],
+    services: pick(['express', 'premiumExterior', 'interiorDetail', 'petHair', 'leatherCare'], {
+      express: 16,
+    }),
+    reviews: [
+      { id: 'r1', author: 'Nadia R.', avatar: avatar(9), rating: 5, date: '4 days ago', text: 'Love that it uses almost no water. Great for my apartment garage.' },
+      { id: 'r2', author: 'Owen T.', avatar: avatar(15), rating: 4, date: '2 weeks ago', text: 'Convenient mobile service. Booking flow is really smooth.' },
+    ],
+  },
+  {
+    id: 'turbo-bay',
+    name: 'Turbo Bay Wash Co.',
+    tagline: 'High-pressure power, family owned',
+    image: img('photo-1503376780353-7e6692767b70'),
+    logo: img('photo-1494976388531-d1058494cdd8', 200),
+    rating: 4.5,
+    reviewCount: 688,
+    distanceKm: 4.9,
+    etaMin: 15,
+    address: '210 Industrial Ave, Dockside',
+    area: 'Dockside',
+    open: true,
+    openTime: '06:30',
+    closeTime: '20:00',
+    priceLevel: 2,
+    tags: ['Family', 'Trucks & SUV', 'Loyalty'],
+    verified: false,
+    bookingsToday: 51,
+    gallery: [
+      img('photo-1503376780353-7e6692767b70'),
+      img('photo-1605164599901-db7f68c2b6f9'),
+    ],
+    services: pick(['express', 'premiumExterior', 'interiorDetail', 'fullValet', 'engineBay', 'headlight'], {
+      fullValet: 54,
+    }),
+    reviews: [
+      { id: 'r1', author: 'Greg M.', avatar: avatar(68), rating: 5, date: '6 days ago', text: 'Best place for my pickup truck. They handle the big vehicles no problem.' },
+      { id: 'r2', author: 'Lucy F.', avatar: avatar(41), rating: 4, date: '3 weeks ago', text: 'Solid wash, friendly staff, decent loyalty perks.' },
+    ],
+  },
+];
+
+export function getCompany(id?: string | string[]): Company | undefined {
+  const key = Array.isArray(id) ? id[0] : id;
+  return COMPANIES.find((c) => c.id === key);
+}
+
+export const CATEGORIES = [
+  { key: 'all', label: 'All', icon: 'apps' },
+  { key: 'express', label: 'Express', icon: 'flash' },
+  { key: 'premium', label: 'Premium', icon: 'car-sport' },
+  { key: 'detailing', label: 'Detailing', icon: 'diamond' },
+  { key: 'eco', label: 'Eco', icon: 'leaf' },
+  { key: 'mobile', label: 'Mobile', icon: 'navigate' },
+] as const;
