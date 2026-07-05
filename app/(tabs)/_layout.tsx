@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,21 +27,27 @@ function haptic() {
 
 function GlassTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const { c } = useTheme();
   const styles = useStyles();
+
+  const blurProps = {
+    intensity: 50,
+    tint: c.blurTint,
+    experimentalBlurMethod: Platform.OS === 'android' ? ('dimezisBlurView' as const) : undefined,
+  };
+
+  const navigateTo = (route: NavigationRoute<ParamListBase, string>, focused: boolean) => {
+    haptic();
+    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
+  };
 
   const renderTab = (route: NavigationRoute<ParamListBase, string>, index: number) => {
     const meta = ICONS[route.name];
     if (!meta) return null;
     const focused = state.index === index;
-    const onPress = () => {
-      haptic();
-      const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-      if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
-    };
     return (
-      <Pressable key={route.key} onPress={onPress} style={styles.tab}>
+      <Pressable key={route.key} onPress={() => navigateTo(route, focused)} style={styles.tab}>
         {focused && <LinearGradient colors={gradients.water} style={styles.activePill} />}
         <Ionicons name={focused ? meta.on : meta.off} size={22} color={focused ? c.white : c.textMuted} />
         <Txt variant="tiny" color={focused ? c.white : c.textMuted} style={{ marginTop: 3 }}>
@@ -51,43 +57,42 @@ function GlassTabBar({ state, navigation }: BottomTabBarProps) {
     );
   };
 
-  // Route order: [index, explore, bookings, profile] → split around the center FAB.
+  // Apple Music layout: the primary destinations live together in the main pill;
+  // Search sits in its own detached glass capsule on the right.
   const routes = state.routes.filter((r) => ICONS[r.name]);
-  const left = routes.slice(0, 2);
-  const right = routes.slice(2);
+  const mainRoutes = routes.filter((r) => r.name !== 'explore');
+  const searchRoute = routes.find((r) => r.name === 'explore');
   const indexOf = (r: NavigationRoute<ParamListBase, string>) => state.routes.findIndex((x) => x.key === r.key);
+  const searchFocused = !!searchRoute && state.index === indexOf(searchRoute);
 
   return (
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, 12), pointerEvents: 'box-none' }]}>
-      <View style={styles.barContainer}>
-        <BlurView
-          intensity={50}
-          tint={c.blurTint}
-          experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
-          style={styles.bar}
-        >
+      <View style={styles.row}>
+        {/* Main Liquid Glass pill with the primary destinations */}
+        <BlurView {...blurProps} style={styles.bar}>
           <LinearGradient colors={c.cardGradient} style={StyleSheet.absoluteFill} />
-          {left.map((r) => renderTab(r, indexOf(r)))}
-          <View style={styles.tab} />
-          {right.map((r) => renderTab(r, indexOf(r)))}
+          {mainRoutes.map((r) => renderTab(r, indexOf(r)))}
         </BlurView>
 
-        {/* Raised center "Book" action */}
-        <Pressable
-          onPress={() => {
-            haptic();
-            router.push('/explore');
-          }}
-          style={({ pressed }) => [styles.fabWrap, pressed && { opacity: 0.9, transform: [{ scale: 0.94 }] }]}
-        >
-          <View style={styles.fabHalo} />
-          <LinearGradient colors={gradients.water} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.fab}>
-            <Ionicons name="add" size={30} color={c.white} />
-          </LinearGradient>
-          <Txt variant="tiny" color={c.aquaSoft} style={styles.fabLabel}>
-            Book
-          </Txt>
-        </Pressable>
+        {/* Detached Search capsule */}
+        {searchRoute && (
+          <BlurView {...blurProps} style={styles.searchPill}>
+            <LinearGradient colors={c.cardGradient} style={StyleSheet.absoluteFill} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Search"
+              onPress={() => navigateTo(searchRoute, searchFocused)}
+              style={styles.searchBtn}
+            >
+              {searchFocused && <LinearGradient colors={gradients.water} style={styles.activePill} />}
+              <Ionicons
+                name={searchFocused ? 'search' : 'search-outline'}
+                size={24}
+                color={searchFocused ? c.white : c.textMuted}
+              />
+            </Pressable>
+          </BlurView>
+        )}
       </View>
     </View>
   );
@@ -119,7 +124,9 @@ function NativeLiquidTabs() {
         <Label>Profile</Label>
         <Icon sf={{ default: 'person', selected: 'person.fill' }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="explore">
+      {/* `role="search"` makes iOS 26 detach this into its own glass capsule on
+          the right — the Apple Music layout. Keep it last in the trigger list. */}
+      <NativeTabs.Trigger name="explore" role="search">
         <Label>Search</Label>
         <Icon sf={{ default: 'magnifyingglass', selected: 'magnifyingglass' }} />
       </NativeTabs.Trigger>
@@ -153,8 +160,6 @@ export default function TabsLayout() {
   return LIQUID_GLASS ? <NativeLiquidTabs /> : <CustomGlassTabs />;
 }
 
-const FAB_SIZE = 64;
-
 const useStyles = makeStyles((c) => ({
   wrap: {
     position: 'absolute',
@@ -164,11 +169,14 @@ const useStyles = makeStyles((c) => ({
     paddingHorizontal: 16,
     alignItems: 'center',
   },
-  barContainer: {
+  row: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
     width: '100%',
-    position: 'relative',
+    gap: 10,
   },
   bar: {
+    flex: 1,
     flexDirection: 'row',
     borderRadius: 26,
     overflow: 'hidden',
@@ -176,13 +184,31 @@ const useStyles = makeStyles((c) => ({
     borderColor: c.glassBorder,
     paddingVertical: 10,
     paddingHorizontal: 8,
-    width: '100%',
     backgroundColor: c.tabBarBg,
     shadowColor: '#000',
     shadowOpacity: 0.4,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
     elevation: 16,
+  },
+  searchPill: {
+    width: 62,
+    borderRadius: 26,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: c.glassBorder,
+    backgroundColor: c.tabBarBg,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 16,
+  },
+  searchBtn: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tab: {
     flex: 1,
@@ -199,38 +225,5 @@ const useStyles = makeStyles((c) => ({
     right: 8,
     borderRadius: 18,
     opacity: 0.22,
-  },
-  fabWrap: {
-    position: 'absolute',
-    left: '50%',
-    top: -26,
-    marginLeft: -32,
-    width: FAB_SIZE,
-    alignItems: 'center',
-  },
-  fab: {
-    width: FAB_SIZE,
-    height: FAB_SIZE,
-    borderRadius: FAB_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: c.fabBorder,
-    shadowColor: c.aqua,
-    shadowOpacity: 0.6,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 14,
-  },
-  fabHalo: {
-    position: 'absolute',
-    top: -4,
-    width: FAB_SIZE + 12,
-    height: FAB_SIZE + 12,
-    borderRadius: (FAB_SIZE + 12) / 2,
-    backgroundColor: 'rgba(34,211,238,0.18)',
-  },
-  fabLabel: {
-    marginTop: 3,
   },
 }));
