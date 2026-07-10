@@ -36,6 +36,13 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 180
         }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Sparkle Wash uses the microphone to let you search car washes by voice.",
+          "speechRecognitionPermission": "Sparkle Wash uses speech recognition to turn your voice into a search."
+        }
       ]
     ],
     "experiments": {

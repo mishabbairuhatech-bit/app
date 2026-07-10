@@ -3,7 +3,7 @@ import { ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { radius, spacing, makeStyles, useTheme } from '@/theme';
-import { Screen, Txt, Chip, CompanyRow, GlassCard } from '@/components';
+import { Screen, Txt, Chip, CompanyRow, GlassCard, SectionHeader, AccountMenu } from '@/components';
 import { COMPANIES } from '@/data/companies';
 
 const SORTS = [
@@ -90,6 +90,11 @@ export default function ExploreScreen() {
         ) : (
           results.map((company) => <CompanyRow key={company.id} company={company} />)
         )}
+
+        <View style={styles.accountSection}>
+          <SectionHeader title="Account" />
+        </View>
+        <AccountMenu />
       </ScrollView>
     </Screen>
   );
@@ -115,5 +120,9 @@ const useStyles = makeStyles((c) => ({
   chips: {
     gap: 9,
     paddingVertical: spacing.lg,
+  },
+  accountSection: {
+    marginTop: spacing.xxl,
+    marginBottom: spacing.md,
   },
 }));

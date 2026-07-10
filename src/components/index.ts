@@ -14,3 +14,4 @@ export { PriceSummary } from './PriceSummary';
 export { StepIndicator } from './StepIndicator';
 export { BottomBar } from './BottomBar';
 export { ThemeToggle, ThemeIconButton } from './ThemeToggle';
+export { AccountMenu } from './AccountMenu';

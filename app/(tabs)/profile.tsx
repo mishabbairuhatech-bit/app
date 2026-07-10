@@ -12,18 +12,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gradients, radius, spacing, makeStyles, useTheme } from '@/theme';
-import { Screen, Txt, GlassCard, SectionHeader, ThemeToggle } from '@/components';
-import { USER, VEHICLES, PAYMENT_METHODS } from '@/data/user';
+import { Screen, Txt, GlassCard, SectionHeader, ThemeToggle, AccountMenu } from '@/components';
+import { USER, VEHICLES } from '@/data/user';
 import { useBooking } from '@/store/BookingStore';
-
-const MENU: { icon: keyof typeof Ionicons.glyphMap; label: string; hint?: string }[] = [
-  { icon: 'card-outline', label: 'Payment methods', hint: `${PAYMENT_METHODS.length} saved` },
-  { icon: 'gift-outline', label: 'Rewards & offers', hint: 'Gold tier' },
-  { icon: 'location-outline', label: 'Saved addresses' },
-  { icon: 'notifications-outline', label: 'Notifications' },
-  { icon: 'help-buoy-outline', label: 'Help & support' },
-  { icon: 'settings-outline', label: 'Settings' },
-];
 
 const TYPE_ICON: Record<string, keyof typeof Ionicons.glyphMap> = {
   sedan: 'car-sport',
@@ -141,24 +132,7 @@ export default function ProfileScreen() {
           <SectionHeader title="Account" />
         </View>
         <View style={{ paddingHorizontal: spacing.lg, gap: 10 }}>
-          {MENU.map((m) => (
-            <GlassCard key={m.label} onPress={() => {}} style={styles.menuItem}>
-              <View style={styles.menuInner}>
-                <View style={styles.menuIcon}>
-                  <Ionicons name={m.icon} size={19} color={c.aquaSoft} />
-                </View>
-                <Txt variant="title" style={{ flex: 1 }}>
-                  {m.label}
-                </Txt>
-                {m.hint && (
-                  <Txt variant="caption" color={c.textMuted}>
-                    {m.hint}
-                  </Txt>
-                )}
-                <Ionicons name="chevron-forward" size={18} color={c.textMuted} />
-              </View>
-            </GlassCard>
-          ))}
+          <AccountMenu />
 
           <Pressable style={styles.logout}>
             <Ionicons name="log-out-outline" size={19} color={c.danger} />
@@ -285,23 +259,6 @@ const useStyles = makeStyles((c) => ({
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 7,
-  },
-  menuItem: {
-    padding: 0,
-  },
-  menuInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 14,
-  },
-  menuIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: 'rgba(34,211,238,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   logout: {
     flexDirection: 'row',
