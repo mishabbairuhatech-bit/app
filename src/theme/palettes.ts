@@ -73,9 +73,11 @@ const accents = {
 
 export const darkColors: Palette = {
   ...accents,
-  bg: '#070B18',
-  bgElevated: '#0C1226',
-  bgDeep: '#04060F',
+  // Pure-black (AMOLED) dark background family — elevated surfaces get a
+  // faint lift so cards stay distinguishable against the black canvas.
+  bg: '#000000',
+  bgElevated: '#161616',
+  bgDeep: '#000000',
   text: '#F8FAFC',
   textSoft: '#CBD5E1',
   textMuted: '#94A3B8',
@@ -92,7 +94,7 @@ export const darkColors: Palette = {
   tabBarBg: 'rgba(9,14,30,0.6)',
   bottomBarBg: 'rgba(7,11,24,0.72)',
   fabBorder: 'rgba(7,11,24,0.9)',
-  canvas: ['#0A1024', '#070B18', '#04060F'],
+  canvas: ['#000000', '#000000', '#000000'],
   cardGradient: ['rgba(255,255,255,0.09)', 'rgba(255,255,255,0.03)'],
   sheenGradient: ['rgba(255,255,255,0.16)', 'rgba(255,255,255,0.02)'],
   orb1: 'rgba(34,211,238,0.48)',
@@ -103,9 +105,10 @@ export const darkColors: Palette = {
 
 export const lightColors: Palette = {
   ...accents,
-  bg: '#EAF0FA',
+  // Telegram light background family — clean white with a faint grey backdrop.
+  bg: '#FFFFFF',
   bgElevated: '#FFFFFF',
-  bgDeep: '#DCE4F2',
+  bgDeep: '#F0F2F5',
   text: '#0B1220',
   textSoft: '#334155',
   textMuted: '#5B6B84',
@@ -122,7 +125,7 @@ export const lightColors: Palette = {
   tabBarBg: 'rgba(255,255,255,0.7)',
   bottomBarBg: 'rgba(238,242,250,0.82)',
   fabBorder: 'rgba(255,255,255,0.95)',
-  canvas: ['#F5F8FD', '#EAF0FA', '#DFE7F5'],
+  canvas: ['#FFFFFF', '#FFFFFF', '#FFFFFF'],
   cardGradient: ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.45)'],
   sheenGradient: ['rgba(255,255,255,0.6)', 'rgba(255,255,255,0.05)'],
   orb1: 'rgba(34,211,238,0.32)',
