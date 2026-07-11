@@ -126,7 +126,7 @@ export default function HomeScreen() {
 
         {/* Offers */}
         <View style={styles.section}>
-          <SectionHeader title="Offers for you" actionLabel="See all" onAction={() => router.push('/explore')} />
+          <SectionHeader title="Offers for you" actionLabel="See all" onAction={() => router.push('/search')} />
         </View>
         <ScrollView
           horizontal
@@ -140,7 +140,7 @@ export default function HomeScreen() {
 
         {/* Top rated */}
         <View style={styles.section}>
-          <SectionHeader title="Top rated near you" actionLabel="Map" onAction={() => router.push('/explore')} />
+          <SectionHeader title="Top rated near you" actionLabel="Map" onAction={() => router.push('/search')} />
         </View>
         <ScrollView
           horizontal

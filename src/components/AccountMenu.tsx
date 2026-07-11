@@ -26,7 +26,7 @@ const MENU: MenuEntry[] = [
 
 /**
  * The "Account" list of glass menu cards (payment methods, rewards, settings…).
- * Shared by the Profile screen and the Explore screen so both stay in sync.
+ * Shared by the Profile screen and the Search screen so both stay in sync.
  */
 export function AccountMenu() {
   const { c } = useTheme();

@@ -122,7 +122,7 @@ export default function BookingsScreen() {
               <Txt variant="caption" color={c.textMuted} center style={{ marginTop: 4, marginBottom: 18 }}>
                 Book your first sparkle wash to see it here
               </Txt>
-              <PrimaryButton label="Browse car washes" icon="car-sport" onPress={() => router.push('/explore')} />
+              <PrimaryButton label="Browse car washes" icon="car-sport" onPress={() => router.push('/search')} />
             </GlassCard>
           ) : (
             list.map((b) => <BookingCard key={b.id} booking={b} onPress={() => {}} />)

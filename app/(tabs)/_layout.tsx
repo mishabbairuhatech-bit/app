@@ -29,8 +29,10 @@ function NativeLiquidTabs() {
         <Icon sf={{ default: 'person', selected: 'person.fill' }} />
       </NativeTabs.Trigger>
       {/* `role="search"` makes iOS 26 detach this into its own glass capsule on
-          the right — the Apple Music layout. Keep it last in the trigger list. */}
-      <NativeTabs.Trigger name="explore" role="search">
+          the right and, because the `search` route is a Stack with a native
+          search bar, expands into a live search field in the tab bar.
+          Keep it last in the trigger list. */}
+      <NativeTabs.Trigger name="search" role="search">
         <Label>Search</Label>
         <Icon sf={{ default: 'magnifyingglass', selected: 'magnifyingglass' }} />
       </NativeTabs.Trigger>

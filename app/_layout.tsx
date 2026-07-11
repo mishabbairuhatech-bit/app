@@ -32,7 +32,6 @@ function ThemedApp() {
             }}
           >
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="search" />
             <Stack.Screen name="company/[id]" />
             <Stack.Screen name="booking/schedule" />
             <Stack.Screen name="booking/summary" />
