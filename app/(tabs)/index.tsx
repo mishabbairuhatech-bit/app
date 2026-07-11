@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gradients, radius, spacing, useTheme, makeStyles } from '@/theme';
 import {
   Screen,
@@ -21,63 +13,37 @@ import {
   FeaturedCompanyCard,
   CompanyRow,
   OfferCard,
-  ThemeIconButton,
+  GlassHeader,
+  type HeaderAction,
 } from '@/components';
 import { COMPANIES, CATEGORIES } from '@/data/companies';
 import { OFFERS, USER } from '@/data/user';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { c } = useTheme();
   const styles = useStyles();
   const [category, setCategory] = useState('all');
-  const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler((e) => {
-    scrollY.value = e.contentOffset.y;
-  });
-
-  // Apple-Music-style large header: fades and lifts away as content scrolls up.
-  const topbarStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 56], [1, 0], Extrapolation.CLAMP),
-    transform: [
-      { translateY: interpolate(scrollY.value, [0, 56], [0, -12], Extrapolation.CLAMP) },
-    ],
-  }));
+  const [headerH, setHeaderH] = useState(120);
 
   const featured = [...COMPANIES].sort((a, b) => b.rating - a.rating).slice(0, 3);
+  const firstName = USER.name.split(' ')[0];
+
+  const actions: HeaderAction[] = [
+    { key: 'bell', icon: 'notifications-outline', badge: true, onPress: () => {} },
+    {
+      key: 'avatar',
+      onPress: () => router.push('/profile'),
+      node: <Image source={{ uri: USER.avatar }} style={styles.avatar} />,
+    },
+  ];
 
   return (
     <Screen>
-      <Animated.ScrollView
-        onScroll={onScroll}
-        scrollEventThrottle={16}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + 8, paddingBottom: 130 }}
+        contentContainerStyle={{ paddingTop: headerH + spacing.md, paddingBottom: 130 }}
       >
-        {/* Top bar — large title that animates out on scroll */}
-        <Animated.View style={[styles.topbar, topbarStyle]}>
-          <View style={{ flex: 1 }}>
-            <Txt variant="caption" color={c.textMuted}>
-              Good morning ✨
-            </Txt>
-            <Pressable style={styles.location}>
-              <Ionicons name="location" size={16} color={c.aqua} />
-              <Txt variant="h3">{USER.location.split(',')[0]}</Txt>
-              <Ionicons name="chevron-down" size={15} color={c.textMuted} />
-            </Pressable>
-          </View>
-          <ThemeIconButton />
-          <Pressable style={styles.bell}>
-            <Ionicons name="notifications-outline" size={21} color={c.text} />
-            <View style={styles.bellDot} />
-          </Pressable>
-          <Pressable onPress={() => router.push('/profile')}>
-            <Image source={{ uri: USER.avatar }} style={styles.avatar} />
-          </Pressable>
-        </Animated.View>
-
-
         {/* Smart booking hero */}
         <Pressable style={styles.heroWrap} onPress={() => router.push(`/company/${featured[0].id}`)}>
           <LinearGradient colors={gradients.water} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
@@ -161,49 +127,26 @@ export default function HomeScreen() {
             <CompanyRow key={company.id} company={company} />
           ))}
         </View>
-      </Animated.ScrollView>
+      </ScrollView>
+
+      <GlassHeader
+        title={`Hi, ${firstName}`}
+        subtitle={USER.location}
+        subtitleColor={c.textSoft}
+        subtitleSize={12.5}
+        titleSize={28}
+        actions={actions}
+        onHeight={setHeaderH}
+      />
     </Screen>
   );
 }
 
 const useStyles = makeStyles((c) => ({
-  topbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: spacing.lg,
-  },
-  location: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
-  },
-  bell: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: c.glassBorder,
-    backgroundColor: c.glass,
-  },
-  bellDot: {
-    position: 'absolute',
-    top: 12,
-    right: 13,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: c.aqua,
-    borderWidth: 1.5,
-    borderColor: c.bg,
-  },
   avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 1.5,
     borderColor: c.glassBorder,
   },

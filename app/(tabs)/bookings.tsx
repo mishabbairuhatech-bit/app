@@ -1,17 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gradients, radius, spacing, makeStyles, useTheme } from '@/theme';
-import { Screen, Txt, BookingCard, GlassCard, PrimaryButton } from '@/components';
+import { Screen, Txt, BookingCard, GlassCard, GlassHeader, PrimaryButton } from '@/components';
 import { useBooking } from '@/store/BookingStore';
 import { useRouter } from 'expo-router';
 
@@ -24,12 +16,12 @@ const FILTERS = [
 const UPCOMING = new Set(['pending', 'confirmed', 'checked_in', 'in_progress']);
 
 export default function BookingsScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { c } = useTheme();
   const styles = useStyles();
   const { bookings } = useBooking();
   const [filter, setFilter] = useState<string>('upcoming');
+  const [headerH, setHeaderH] = useState(120);
 
   const list = useMemo(() => {
     if (filter === 'all') return bookings;
@@ -39,32 +31,12 @@ export default function BookingsScreen() {
 
   const active = bookings.find((b) => b.status === 'in_progress');
 
-  const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler((e) => {
-    scrollY.value = e.contentOffset.y;
-  });
-  const headerStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 56], [1, 0], Extrapolation.CLAMP),
-    transform: [
-      { translateY: interpolate(scrollY.value, [0, 56], [0, -12], Extrapolation.CLAMP) },
-    ],
-  }));
-
   return (
     <Screen>
-      <Animated.ScrollView
-        onScroll={onScroll}
-        scrollEventThrottle={16}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingTop: insets.top + 8, paddingBottom: 130 }}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingTop: headerH + spacing.md, paddingBottom: 130 }}
       >
-        <Animated.View style={headerStyle}>
-          <Txt variant="hero">My Bookings</Txt>
-          <Txt variant="body" color={c.textMuted} style={{ marginTop: 2 }}>
-            Track and manage your washes
-          </Txt>
-        </Animated.View>
-
         {/* Live tracking banner */}
         {active && (
           <GlassCard glow style={styles.live} padded>
@@ -128,7 +100,13 @@ export default function BookingsScreen() {
             list.map((b) => <BookingCard key={b.id} booking={b} onPress={() => {}} />)
           )}
         </View>
-      </Animated.ScrollView>
+      </ScrollView>
+
+      <GlassHeader
+        title="My Bookings"
+        subtitle="Track and manage your washes"
+        onHeight={setHeaderH}
+      />
     </Screen>
   );
 }

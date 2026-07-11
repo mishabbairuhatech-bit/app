@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { radius, spacing, makeStyles, useTheme } from '@/theme';
-import { Screen, Txt, GlassCard, Rating } from '@/components';
+import { Screen, Txt, GlassCard, GlassHeader, Rating } from '@/components';
 import { COMPANIES } from '@/data/companies';
 import { formatCurrency } from '@/lib/pricing';
 import type { Company } from '@/types';
@@ -39,28 +38,21 @@ function usePins() {
 }
 
 export default function MapScreen() {
-  const insets = useSafeAreaInsets();
   const { c } = useTheme();
   const styles = useStyles();
   const router = useRouter();
   const pins = usePins();
   const [selectedId, setSelectedId] = useState<string>(COMPANIES[0]?.id ?? '');
+  const [headerH, setHeaderH] = useState(120);
 
   const selected = COMPANIES.find((co) => co.id === selectedId);
   const nearby = useMemo(() => [...COMPANIES].sort((a, b) => a.distanceKm - b.distanceKm), []);
 
   return (
     <Screen>
-      <View style={{ paddingTop: insets.top + 8, paddingHorizontal: spacing.lg }}>
-        <Txt variant="hero">Map</Txt>
-        <Txt variant="body" color={c.textMuted} style={{ marginTop: 2 }}>
-          {COMPANIES.length} washes near your location
-        </Txt>
-      </View>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: 130 }}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingTop: headerH + spacing.md, paddingBottom: 130 }}
       >
         {/* Stylised map canvas */}
         <GlassCard radius={radius.xl} style={styles.canvasCard}>
@@ -144,6 +136,12 @@ export default function MapScreen() {
           );
         })}
       </ScrollView>
+
+      <GlassHeader
+        title="Map"
+        subtitle={`${COMPANIES.length} washes near your location`}
+        onHeight={setHeaderH}
+      />
     </Screen>
   );
 }

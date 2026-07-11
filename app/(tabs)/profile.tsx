@@ -1,18 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gradients, radius, spacing, makeStyles, useTheme } from '@/theme';
-import { Screen, Txt, GlassCard, SectionHeader, ThemeToggle, AccountMenu } from '@/components';
+import { Screen, Txt, GlassCard, GlassHeader, SectionHeader, ThemeToggle, AccountMenu } from '@/components';
 import { USER, VEHICLES } from '@/data/user';
 import { useBooking } from '@/store/BookingStore';
 
@@ -25,38 +17,18 @@ const TYPE_ICON: Record<string, keyof typeof Ionicons.glyphMap> = {
 };
 
 export default function ProfileScreen() {
-  const insets = useSafeAreaInsets();
   const { c } = useTheme();
   const styles = useStyles();
   const { bookings } = useBooking();
   const completed = bookings.filter((b) => b.status === 'completed').length;
-
-  const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler((e) => {
-    scrollY.value = e.contentOffset.y;
-  });
-  const headerStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 56], [1, 0], Extrapolation.CLAMP),
-    transform: [
-      { translateY: interpolate(scrollY.value, [0, 56], [0, -12], Extrapolation.CLAMP) },
-    ],
-  }));
+  const [headerH, setHeaderH] = useState(120);
 
   return (
     <Screen>
-      <Animated.ScrollView
-        onScroll={onScroll}
-        scrollEventThrottle={16}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: insets.top + 8, paddingBottom: 130 }}
+        contentContainerStyle={{ paddingTop: headerH + spacing.md, paddingBottom: 130 }}
       >
-        <Animated.View style={[styles.header, headerStyle]}>
-          <Txt variant="hero">Profile</Txt>
-          <Pressable style={styles.editBtn}>
-            <Ionicons name="create-outline" size={18} color={c.aqua} />
-          </Pressable>
-        </Animated.View>
-
         {/* Profile card */}
         <View style={{ paddingHorizontal: spacing.lg }}>
           <GlassCard glow padded>
@@ -144,7 +116,13 @@ export default function ProfileScreen() {
             Sparkle Wash · v1.0.0 · {USER.memberSince}
           </Txt>
         </View>
-      </Animated.ScrollView>
+      </ScrollView>
+
+      <GlassHeader
+        title="Profile"
+        actions={[{ key: 'edit', icon: 'pencil', onPress: () => {} }]}
+        onHeight={setHeaderH}
+      />
     </Screen>
   );
 }
@@ -165,23 +143,6 @@ function Stat({ value, label, accent }: { value: string; label: string; accent?:
 }
 
 const useStyles = makeStyles((c) => ({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.lg,
-  },
-  editBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: c.glassBorder,
-    backgroundColor: c.glass,
-  },
   profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
