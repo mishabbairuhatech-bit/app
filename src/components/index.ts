@@ -5,6 +5,7 @@ export { PrimaryButton, GhostButton, IconButton } from './Button';
 export { StatusBadge, Tag, Rating, PriceLevel } from './Badges';
 export { Chip } from './Chip';
 export { Header } from './Header';
+export { GlassHeader } from './GlassHeader';
 export { SectionHeader } from './SectionHeader';
 export { FeaturedCompanyCard, CompanyRow } from './CompanyCard';
 export { ServiceCard } from './ServiceCard';

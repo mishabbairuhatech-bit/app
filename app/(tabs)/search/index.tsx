@@ -1,26 +1,26 @@
-import { CompanyRow, Screen } from '@/components';
+import { CompanyRow, GlassHeader, Screen } from '@/components';
 import { COMPANIES } from '@/data/companies';
 import { spacing } from '@/theme';
 import { Stack } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
-  const insets = useSafeAreaInsets();
+  // Height the floating glass header reports back, so content clears it.
+  const [headerH, setHeaderH] = useState(120);
 
   const results = useMemo(() => [...COMPANIES].sort((a, b) => b.rating - a.rating), []);
 
   return (
     <Screen>
-      {/* No header on this screen. */}
+      {/* This tab hosts its own floating glass header instead of a nav bar. */}
       <Stack.Screen options={{ headerShown: false }} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: spacing.lg,
-          paddingTop: insets.top + spacing.md,
+          paddingTop: headerH + spacing.md,
           paddingBottom: 130,
         }}
       >
@@ -28,6 +28,8 @@ export default function SearchScreen() {
           <CompanyRow key={company.id} company={company} />
         ))}
       </ScrollView>
+
+      <GlassHeader title="Search" onHeight={setHeaderH} />
     </Screen>
   );
 }
